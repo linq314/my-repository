@@ -1,7 +1,7 @@
-PImage tree1, tree2, tree3, hellfire;
+PImage tree1, tree2, tree3, hellfire, background, darkbackground;
 Tree[] trees = new Tree[60];
 HashMap<String, PImage> images = new HashMap<String, PImage>();
-int numTrees = 0;
+int numTrees = 60;
 
 class Tree {
   float x; 
@@ -28,6 +28,8 @@ void setup(){
   tree2 = loadImage("bigtree.png");
   tree3 = loadImage("skinnytree.png"); 
   hellfire = loadImage("Hell.gif");
+  background = loadImage("background.jpg");
+  darkbackground = loadImage("backgrounddark.jpg"); 
   
   images.put("tree1", tree1);
   images.put("tree2", tree2);
@@ -54,19 +56,26 @@ void draw() {
     image(hellfire, 0, 0, width, height);
   }
   else {
-    background(240,248,255);
-    noStroke();
-    //setGradient(0,500, width, 500, b1, b2, Y_AXIS);
-    fill(205, 171, 126);
-    rect(0, 500, width, 500);
+    tint(255, 255);
+    image(background, 0, 0);
+    tint(255, 127);
+    image(darkbackground, 0, 0);
+    tint(255, 255);
   
     for (int i = 0; i < 60; i++){
       if (trees[i].isVisible) {
         image(images.get(trees[i].type), trees[i].x, trees[i].y, trees[i].width, trees[i].height);
       }
     }
+    //for (int i = 0; i<60; i++){
+    //  if(numTrees < 10){
+    //    background(darkbackground);
+      //}
+    //}  
   }
-}
+  
+  
+} // end of draw
 
 boolean inBounds(float mx, float my, Tree tree) {
   return mx >= tree.x && mx <= tree.x + tree.width &&
