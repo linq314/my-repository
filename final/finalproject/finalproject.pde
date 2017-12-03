@@ -1,101 +1,123 @@
-PImage Pineapple, Pen, Pizza,PP; 
+import processing.video.*;
 
-//import processing.video.*;
-//Movie ppap;
+PImage Pineapple, Pen, Apple; 
+Movie movie1;
+MovingThing pa, pen, app; 
+ArrayList<Thing> obstacles;
 
-Pizza pizza = new Pizza(10, 400);
-Pineapple pa = new Pineapple(500, 350);
-Boolean gameOver = false;
-Boolean gameWon = false;
+Boolean levelStart = true;
+Boolean levelWon = false;
+Boolean videoStart = true;
+
+int level;
 
 void setup(){
   size(1000, 700);
   
+  // initialize objects
   Pineapple = loadImage("Pineapple.png");
   Pen = loadImage("pen.png");
-  Pizza = loadImage("pizza.png");
-  PP = loadImage("pp.jpg");
-  //ppap = new Movie(this, "ppap.mp4");
-  //ppap.play();
- 
-  Pineapple.resize(20, 40);
-  Pen.resize(10, 40);
-  Pizza.resize(25, 40);
-  PP.resize(1000,700);
-  //ppap.resize(1000,700);
-}
-//
-void draw(){
-    if (gameOver == false) {
-    background(255,248,205);
-    image(Pizza, pizza.xcor, pizza.ycor);
-    //fill(255, 20, 12);
-    //rect(pizza.xcor, pizza.ycor, pizza.w, pizza.h);
-    pizza.move();
-    checkBounds(pizza);
+  Apple = loadImage("apple.png");
+  movie1 = new Movie(this, "ppap.mp4");
   
-    image(Pineapple, pa.xcor, pa.ycor);
-    //fill(20, 20, 12);
-    //rect(pa.xcor, pa.ycor, pa.w, pa.h);
-    
-    if (collides(pizza, pa)) {
-      gameOver = true;
-      gameWon = true;
-    }
-  }
-  else {
-     if (gameWon == true) {
-        image(PP,0,0);
-     }
-     else {
-       //image(ppap, 0, 0); 
-       // ppap video 
-     }
-  }
-  //String s = "catch the pizza";
-  //textSize(30);
-  //fill(255,58);
-  //text(s, 20,10);
+  pa = new MovingThing(20, 40, 5);
+  pen = new MovingThing(10, 40, 2); 
+  app = new MovingThing(20, 40, 5);
+  Pineapple.resize(pa.w, pa.h);
+  Pen.resize(pen.w, pen.h);
+  Apple.resize(app.w, app.h);
+  
+  level = 1;
+  obstacles = new ArrayList<Thing>();
+  
+  // setup level 1
+  levelOneSetup();
+  drawObstacles();
+  image(Apple, app.xcor, app.ycor);
+  image(Pen, pen.xcor, pen.ycor); 
+  noStroke();
+  fill(255, 255, 255, 200);
+  rect(0, 0, width, height);
+  fill(0, 0, 0);
+  textSize(50);
+  textAlign(CENTER);
+  text("Press Enter to start \nUse arrows to move", 200, 100, 600, 300);
 }
 
-//void movieEvent(Movie m) {
-//   m.read();
-//}
+void draw(){
+  if (level == 1 && levelStart == false) {
+    levelOneDraw();
+  }
+  else if (level == 2) {
+    //levelTwoDraw();
+  }
+  else { 
+    //levelThreeDraw();
+  }
+}
 
-void keyPressed(){
-   if (keyCode == UP) {
-     pa.ycor -= pa.speed;
+void keyReleased() {
+  if (keyCode == UP) {
+     pen.dy = 0;
    }
    
    if (keyCode == DOWN) {
-     pa.ycor += pa.speed;
+     pen.dy = 0;
    }
    
    if (keyCode == LEFT) {
-     pa.xcor -= pa.speed;
+     pen.dx = 0;
    }
    
    if (keyCode == RIGHT) {
-     pa.xcor += pa.speed;
+     pen.dx = 0;
    }
-   if (pa.xcor + pa.w >= width) {
-       pa.xcor = width; 
-     }
-     else if (pa.xcor <= 0) {
-       pa.xcor = 0; 
-    }
-    if (pa.ycor + pa.h >= height) {
-       pa.ycor = height; 
-    }
-    else if (pa.ycor <= 0) {
-       pa.ycor = 0; 
+}
+
+void keyPressed(){
+  // Change the velocity of the pen when key pressed
+   if (keyCode == UP) {
+     pen.dy = -1 * pen.speed;
+   }
+   
+   if (keyCode == DOWN) {
+     pen.dy = pen.speed;
+   }
+   
+   if (keyCode == LEFT) {
+     pen.dx = -1 * pen.speed;
+   }
+   
+   if (keyCode == RIGHT) {
+     pen.dx = pen.speed;
+   }
+    // start and restart level
+    if (key == RETURN || key == ENTER) {
+      if (level == 1 && levelStart == true) {
+        levelStart = false;
+      }
+      else if (level == 1 && levelWon == true) {
+        //levelTwoSetup();    
+        level += 1;
+        levelWon = false;
+      }
+      else if (level == 2 && levelWon == true) {
+        //levelThreeSetup();
+        level += 1;
+        levelWon = false;
+      }
+      else if (level == 3 && levelWon == true) {
+        levelOneSetup();
+         level = 1;
+         levelWon = false;
+      }
     }
 }
 
 void checkBounds(MovingThing thing){
      if (thing.dx > 0 && thing.xcor + thing.w >= width) {
        thing.dx *= -1;
-       thing.xcor = width; 
+       thing.xcor = width - thing.w; 
      }
      else if (thing.dx < 0 && thing.xcor <= 0) {
        thing.dx *= -1;
@@ -103,11 +125,32 @@ void checkBounds(MovingThing thing){
     }
     if (thing.dy > 0 && thing.ycor + thing.h >= height) {
        thing.dy *= -1;
-       thing.ycor = height; 
+       thing.ycor = height - thing.h; 
     }
     else if (thing.dy < 0 && thing.ycor <= 0) {
        thing.dy *= -1;
        thing.ycor = 0; 
+    }
+    for (int i = 0; i < obstacles.size(); i++){
+      Thing obs = obstacles.get(i);
+      if (collides(thing, obs)) {
+        if (thing.dx > 0 && thing.xcor + thing.w >= obs.xcor && thing.xcor < obs.xcor) {
+           thing.dx *= -1;
+           thing.xcor = obs.xcor - thing.w;
+        }
+        if (thing.dx < 0 && thing.xcor <= obs.xcor + obs.w && thing.xcor + thing.w > obs.xcor + obs.w) {
+           thing.dx *= -1;
+           thing.xcor = obs.xcor + obs.w;
+        }
+        if (thing.dy > 0 && thing.ycor + thing.h >= obs.ycor && thing.ycor < obs.ycor) {
+           thing.dy *= -1;
+           thing.ycor = obs.ycor - thing.h;
+        }
+        if (thing.dy < 0 && thing.ycor <= obs.ycor + obs.h && thing.ycor + thing.h > obs.ycor + obs.h) {
+           thing.dy *= -1;
+           thing.ycor = obs.ycor + obs.h;
+        }
+      }
     }
 }
 
