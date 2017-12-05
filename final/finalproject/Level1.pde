@@ -5,20 +5,25 @@ void levelOneSetup(){
   pen.dx = pen.dy = 0;
   
   obstacles.clear();
-  obstacles.add(new Thing(width/5, height/3, 50, 100));
-  obstacles.add(new Thing(0, height/3*2, 300, height/3));
-  obstacles.add(new Thing(width/3*2, 0, 100, 400));
+  obstacles.add(new Thing(width/158*6, height/4, 40, 180));
+  obstacles.add(new Thing(0, height/7*6, 360, height/7));
+  obstacles.add(new Thing(width/3*2, 0, 60, 140));
+  obstacles.add(new Thing(width/4*3, 300, 70, 70));
+  obstacles.add(new Thing(width/2, 400, 130, 20));
+  obstacles.add(new Thing(width/6, 200, 90, 10));
 }
 
 void drawObstacles() {
-  fill(233, 120, 234);
+  fill(#FFFC11);
+  noStroke();
   for (int i = 0; i < obstacles.size(); i++) {
     rect(obstacles.get(i).xcor, obstacles.get(i).ycor, obstacles.get(i).w, obstacles.get(i).h);
   } 
 }
 
 void levelOneDraw(){
-   // the video is playing and it hasn't finished
+   
+  // the video is playing and it hasn't finished
    if (videoStart == false && levelWon == false) {
      // if there are still frames
      if (movie1.available()) {
@@ -29,11 +34,12 @@ void levelOneDraw(){
      // video is done, proceed
      else {
        levelWon = true; 
+       videoStart = true;
      }
    }
    // level 1 has started, not yet won
    else if (levelWon == false){  
-     background(255,248,205);
+     background(#E8A60C);
      // Draw all the obstacles
      drawObstacles();
      image(Apple, app.xcor, app.ycor);
@@ -46,7 +52,7 @@ void levelOneDraw(){
         if (videoStart == true) {
            movie1.play(); 
            videoStart = false;
-        }
+       }
      }
    }
 }
