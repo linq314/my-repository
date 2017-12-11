@@ -2,7 +2,7 @@ import processing.video.*;
 
 import processing.sound.*;
 
-PImage Pineapple, Pen, Apple, Ppapguy; 
+PImage Pineapple, Pen, Apple, Ppapguy, Background; 
 Movie movie1;
 Movie movie2;
 Movie movie3;
@@ -10,7 +10,7 @@ SoundFile sound1;
 SoundFile sound2;
 SoundFile sound3;
 
-MovingThing pa, pen, app,pguy; 
+MovingThing pa, pen, app, pguy; 
 ArrayList<Thing> obstacles;
 
 Boolean levelStart = true;
@@ -27,6 +27,7 @@ void setup(){
   Pen = loadImage("pen.png");
   Apple = loadImage("apple.png");
   Ppapguy = loadImage("ppapguy.png");
+  Background = loadImage("back.png");
   movie1 = new Movie(this, "applepen.mp4");
   movie2 = new Movie(this, "pineapplepen.mp4");
   movie3 = new Movie(this, "ppap.mp4");
@@ -34,31 +35,21 @@ void setup(){
   sound2 = new SoundFile(this, "pineapplepen.mp3");
   sound3 = new SoundFile(this, "ppap.mp3");
   
-  
   pa = new MovingThing(20, 40, 8);
   pen = new MovingThing(30, 50, 3); 
   app = new MovingThing(40, 40, 5);
-  pguy = new MovingThing(30, 40, 5);
+  pguy = new MovingThing(10, 30, 9);
   Pineapple.resize(pa.w, pa.h);
   Pen.resize(pen.w, pen.h);
   Apple.resize(app.w, app.h);
   Ppapguy.resize(pguy.w, pguy.h);
+  Background.resize(1000, 700);
   
   level = 1;
   obstacles = new ArrayList<Thing>();
   
   // setup level 1
   levelOneSetup();
-  drawObstacles();
-  image(Apple, app.xcor, app.ycor);
-  image(Pen, pen.xcor, pen.ycor); 
-  noStroke();
-  fill(255,255,255,200);
-  rect(0, 0, width, height);
-  fill(#FF640C);
-  textSize(50);
-  textAlign(CENTER);
-  text("Press Enter to start \nUse arrows to move", 200, 100, 600, 300);
 }
 
 void draw(){
@@ -111,20 +102,19 @@ void keyPressed(){
     // start and restart level
     if (key == RETURN || key == ENTER) {
       if (level == 1 && levelStart == true) {
-        sound1.play();
         sound1.loop();
         levelStart = false;
       }
       if (level == 1 && levelWon == true) {
-        levelTwoSetup();    
-        level += 1;
+        levelTwoSetup(); 
         sound2.loop();
+        level += 1;
         levelWon = false;
       }
       if (level == 2 && levelWon == true) {
         levelThreeSetup();
-        level += 1;
         sound3.loop();
+        level += 1;
         levelWon = false;
       }
       if (level == 3 && levelWon == true) {
